@@ -1,16 +1,70 @@
-[project]
+[tool.poetry]
 name = "abuse-reporter"
 version = "0.1.0"
 description = "Abuse reporting agent for websites hosted on Dreamhost."
-authors = [
-    {name = "xransum",email = "xransum@users.noreply.github.com"}
-]
-license = {text = "MIT"}
+authors = ["xransum <xransum@users.noreply.github.com>"]
+license = "MIT"
 readme = "README.md"
-requires-python = "3.11"
-dependencies = [
-]
+homepage = "https://github.com/xransum/abuse-reporter"
+repository = "https://github.com/xransum/abuse-reporter"
+classifiers = ["Programming Language :: Python :: 3.11"]
 
+[tool.poetry.scripts]
+reporter = "abuse_reporter.main:main"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+colorama = ">=0.4.6"
+dotenv = ">=0.9.9"
+requests = ">=2.32.5"
+
+[tool.poetry.group.dev.dependencies]
+nox = ">=2020.8.22"
+pytest = ">=6.2.5"
+coverage = ">=7.13.0"
+mypy = ">=1.19.1"
+typeguard = ">=4.4.4"
+pre-commit = ">=4.5.1"
+pre-commit-hooks = ">=6.0.0"
+black = ">=25.12.0"
+flake8 = ">=7.3.0"
+flake8-bandit = ">=4.1.1"
+flake8-bugbear = ">=25.11.29"
+flake8-docstrings = ">=1.7.0"
+flake8-rst-docstrings = ">=0.4.0"
+darglint = ">=1.8.1"
+poetry = ">=2.2.1"
+isort = ">=7.0.0"
+reorder-python-imports = ">=3.16.0"
+typing-extensions = ">=4.15.0"
+nox-poetry = ">=1.2.0"
+poetry-plugin-export = ">=1.9.0"
+types-colorama = ">=0.4.15"
+
+[tool.poetry.extras]
+# Extra name -> list of optional main deps
+typecheck = ["types-colorama"]
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.coverage.run]
+branch = true
+source = ["abuse_reporter"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 100
+
+[tool.pytest.ini_options]
+filterwarnings = []
+
+[tool.black]
+line-length = 80
+
+[tool.isort]
+profile = "black"
+lines_after_imports = 2
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
