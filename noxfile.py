@@ -11,6 +11,7 @@ from uuid import uuid4
 import nox
 from nox_poetry import Session, session
 
+
 PACKAGE = "abuse_reporter"
 PYTHON_VERSION = "3.11"
 LOCATIONS = (

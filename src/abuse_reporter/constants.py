@@ -1,3 +1,5 @@
+"""Constants module."""
+
 METHOD_FLAGS = ["POST", "PUT", "DELETE"]
 WHITELISTED_URIS = [
     r"/static/",

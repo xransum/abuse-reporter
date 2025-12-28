@@ -61,8 +61,7 @@ def run_ssh_command(
     password: str,
     command: str,
 ):
-    """
-    Executes a command on a remote server over SSH.
+    """Executes a command on a remote server over SSH.
 
     Args:
         hostname (str): The hostname or IP address of the remote server.
@@ -107,8 +106,7 @@ def run_ssh_command(
 def get_whois_info(
     ip_addr: str, retry: int = 0, max_retries: int = 3
 ) -> whois.WhoisEntry | None:
-    """
-    Retrieves WHOIS information for a given IP address.
+    """Retrieves WHOIS information for a given IP address.
 
     Args:
         ip_addr (str): The IP address to query.
@@ -116,12 +114,13 @@ def get_whois_info(
         max_retries (int): The maximum number of retry attempts.
 
     Returns:
-        whois.WhoisEntry | None: The WHOIS information or None if the query fails.
+        whois.WhoisEntry | None: The WHOIS information or None if the query
+            fails.
     """
     try:
         w = whois.whois(ip_addr)
         return w
-    except whois.parser.PywhoisError as e:
+    except whois.exceptions.PywhoisError as e:
         if retry < max_retries:
             return get_whois_info(ip_addr, retry + 1, max_retries)
         print(f"Failed to get WHOIS info for {ip_addr}: {e}", file=sys.stderr)
@@ -129,20 +128,20 @@ def get_whois_info(
 
 
 def get_ip_info(ip_addr: str) -> dict | None:
-    """
-    Fetches information about a given IP address using the ipinfo.io API.
+    """Fetches information about a given IP address using the ipinfo.io API.
 
     Args:
         ip_addr (str): The IP address to retrieve information for.
 
     Returns:
-        dict | None: A dictionary containing the IP address information if the request is successful,
-                     or None if an error occurs during the request.
+        dict | None: A dictionary containing the IP address information if the
+            request is successful, or None if an error occurs during the request.
 
     Notes:
         - This function uses the ipinfo.io API to fetch IP address details.
         - A timeout of 10 seconds is set for the API request.
-        - If the request fails, an error message is printed to stderr, and None is returned.
+        - If the request fails, an error message is printed to stderr, and None
+            is returned.
     """
     try:
         response = requests.get(
@@ -163,8 +162,7 @@ def get_ip_info(ip_addr: str) -> dict | None:
 
 
 def redact_hostname(txt: str, hostname: str, filler: str = "[REDACTED]") -> str:
-    """
-    Redacts occurrences of a specified hostname in the given text.
+    """Redacts occurrences of a specified hostname in the given text.
 
     This function replaces all instances of the specified hostname in the input
     text with a filler string. It ensures that both the hostname and its variant
@@ -226,13 +224,13 @@ URI_FLAGS = [
 
 
 def is_request_flagged(log: dict) -> bool:
-    """
-    Determines if a given request log should be flagged based on its HTTP method
-    and URI path.
+    """Check if a given request log be flagged based on its HTTP method and URI.
 
     Args:
-        log (dict): A dictionary containing request log details. Expected keys are:
-            - "method" (str): The HTTP method of the request (e.g., "GET", "POST").
+        log (dict): A dictionary containing request log details. Expected keys
+            are:
+            - "method" (str): The HTTP method of the request (e.g., "GET",
+                "POST").
             - "uri_path" (str): The URI path of the request.
 
     Returns:
@@ -257,8 +255,7 @@ def is_request_flagged(log: dict) -> bool:
 
 
 def send_abuse_report(to_address: str, subject: str, body: str):
-    """
-    Sends an abuse report email to the specified recipient.
+    """Sends an abuse report email to the specified recipient.
 
     Args:
         to_address (str): The recipient's email address.
@@ -277,7 +274,8 @@ def get_hostname_from_ip(ip_addr: str) -> str:
         ip_addr (str): The IP address to look up.
 
     Returns:
-        str: The hostname associated with the IP address, or "Unknown" if not found.
+        str: The hostname associated with the IP address, or "Unknown" if not
+            found.
     """
     try:
         hostname, *_ = socket.gethostbyaddr(ip_addr)
@@ -289,8 +287,7 @@ def get_hostname_from_ip(ip_addr: str) -> str:
 def create_email_message(
     to_address: str, subject: str, body: str
 ) -> EmailMessage:
-    """
-    Creates an email message object.
+    """Creates an email message object.
 
     Args:
         to_address (str): The recipient's email address.
@@ -310,8 +307,7 @@ def create_email_message(
 
 
 def send_email_via_smtp(msg: EmailMessage):
-    """
-    Sends an email message using the SMTP server.
+    """Sends an email message using the SMTP server.
 
     Args:
         msg (EmailMessage): The email message to send.
@@ -325,15 +321,15 @@ def send_email_via_smtp(msg: EmailMessage):
 
 
 def process_log_line(log_line: str, external_hostname: str) -> dict | None:
-    """
-    Processes a single log line, extracting relevant data.
+    """Processes a single log line, extracting relevant data.
 
     Args:
         log_line (str): The raw log line.
         external_hostname (str): The hostname to redact.
 
     Returns:
-        dict | None: A dictionary containing parsed log data, or None if parsing fails.
+        dict | None: A dictionary containing parsed log data, or None if parsing
+            fails.
     """
     log_line = redact_hostname(log_line, external_hostname)
     match = LOG_PATTERN.match(log_line)
@@ -377,15 +373,15 @@ def process_log_line(log_line: str, external_hostname: str) -> dict | None:
 def group_logs_by_ip(
     log_lines: list[str], external_hostname: str, max_age_days: int = 3
 ) -> dict[str, list[dict]]:
-    """
-    Groups log lines by IP address.
+    """Groups log lines by IP address.
 
     Args:
         log_lines (list[str]): A list of raw log lines.
         external_hostname (str): The hostname to redact.
 
     Returns:
-        dict: A dictionary where keys are IP addresses and values are lists of log data.
+        dict: A dictionary where keys are IP addresses and values are lists of
+            log data.
     """
     logs_by_ip: dict[str, list[dict]] = {}
     for log_line in log_lines:
@@ -417,8 +413,7 @@ def group_logs_by_ip(
 
 
 def handle_already_reported_ip(ip_addr: str, logs: list[dict], report: dict):
-    """
-    Handles the case where an IP address has already been reported.
+    """Handles the case where an IP address has already been reported.
 
     Args:
         ip_addr (str): The IP address.
@@ -436,8 +431,7 @@ def handle_already_reported_ip(ip_addr: str, logs: list[dict], report: dict):
 def handle_flagged_ip(
     ip_addr: str, logs: list[dict], reports: ReportsDatabase, qf: ContactFinder
 ):
-    """
-    Handles the case where an IP address is flagged for unwanted traffic.
+    """Handles the case where an IP address is flagged for unwanted traffic.
 
     Args:
         ip_addr (str): The IP address.
@@ -503,8 +497,7 @@ def handle_flagged_ip(
 
 
 def process_logs(logs_by_ip: dict, reports: ReportsDatabase, qf: ContactFinder):
-    """
-    Processes logs grouped by IP address.
+    """Processes logs grouped by IP address.
 
     Args:
         logs_by_ip (dict): Logs grouped by IP address.

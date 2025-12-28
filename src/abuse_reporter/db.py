@@ -1,18 +1,19 @@
+"""Database interface for managing reported IP addresses."""
+
 import sqlite3
 
 
 class ReportsDatabase:
-    """
-    ReportsDatabase is a class that provides an interface for managing a database
-    of reported IP addresses. It allows adding, retrieving, and checking the existence
-    of reported IPs in the database.
+    """ReportsDatabase is a class that provides an interface for managing a
+        database of reported IP addresses. It allows adding, retrieving, and
+        checking the existence of reported IPs in the database.
     Attributes:
         con (sqlite3.Connection): The SQLite database connection object.
         cur (sqlite3.Cursor): The SQLite database cursor object.
     Methods:
         __init__(db_name: str):
-            Initializes the database connection and creates the `reported_ips` table
-            if it does not already exist.
+            Initializes the database connection and creates the `reported_ips`
+            table if it does not already exist.
         get_reported_ip_addrs() -> list:
             Retrieves a list of all reported IP addresses from the database.
         get_reported_ip(ip_addr: str) -> dict | None:
@@ -96,7 +97,8 @@ class ReportsDatabase:
         reported_ip = self.get_reported_ip(ip_addr)
         if reported_ip:
             print(
-                f"Already reported {reported_ip['ip_addr']} on {reported_ip['date_added']}, skipping."
+                f"Already reported {reported_ip['ip_addr']} on "
+                f"{reported_ip['date_added']}, skipping."
             )
             return True
         return False
