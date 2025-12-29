@@ -12,17 +12,20 @@ Abuse Reporter is a tool designed to analyze server logs, identify unwanted traf
 ## Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/your-username/abuse-reporter.git
    cd abuse-reporter
    ```
 
 2. Install Poetry (if not already installed):
+
    ```bash
    curl -sSL https://install.python-poetry.org | python3 -
    ```
 
 3. Install dependencies using Poetry:
+
    ```bash
    poetry install
    ```
@@ -45,6 +48,7 @@ Abuse Reporter is a tool designed to analyze server logs, identify unwanted traf
 ## Usage
 
 Run the Abuse Reporter program using Poetry:
+
 ```bash
 poetry run python -m abuse_reporter
 ```
@@ -54,6 +58,7 @@ poetry run python -m abuse_reporter
 To enable testing mode, set the `TESTING` constant in `abuse_reporter/constants.py` to `True`. This prevents actual reports from being sent.
 
 Alternatively, you can use the `NO_SEND` environment variable to disable sending SMTP and Discord notifications:
+
 ```bash
 NO_SEND=1 poetry run python -m abuse_reporter
 ```

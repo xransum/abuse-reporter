@@ -80,9 +80,7 @@ class ReportsDatabase:
             date_added (str, optional): The date the IP was added. Defaults to the current date.
         """
         if date_added is None:
-            date_added = (
-                "date('now')"  # Use SQLite's date function for the default value
-            )
+            date_added = "date('now')"  # Use SQLite's date function for the default value
             self.cur.execute(
                 f"""
                 INSERT OR IGNORE INTO reported_ips (ip_addr, date_added)
