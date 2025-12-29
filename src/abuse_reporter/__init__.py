@@ -20,4 +20,9 @@ app_root = os.path.dirname(
 # application root
 load_dotenv(os.path.join(app_root, ".env"))
 
-__all__ = ["Fore", "Style", "environ"]
+__all__ = [
+    "app_root",
+    "environ",
+    "Fore",
+    "Style",
+]
