@@ -1,3 +1,5 @@
+"""Module for sending abuse report emails via SMTP."""
+
 import smtplib
 from email.message import EmailMessage
 
@@ -11,8 +13,7 @@ from abuse_reporter.constants import (
 
 
 def send_abuse_report(to_address: str, subject: str, body: str):
-    """
-    Sends an abuse report email to the specified recipient.
+    """Sends an abuse report email to the specified recipient.
 
     Args:
         to_address (str): The recipient's email address.
@@ -22,8 +23,8 @@ def send_abuse_report(to_address: str, subject: str, body: str):
     msg = create_email_message(to_address, subject, body)
     if NO_SEND:
         print(
-            f"[!] NO_SEND is enabled. Email to {to_address} with subject "
-            f'"{subject}" not sent.'
+            f"[!] NO_SEND is enabled. Email to {to_address!r} with subject "
+            f"{subject!r} not sent."
         )
         return
 
@@ -33,8 +34,7 @@ def send_abuse_report(to_address: str, subject: str, body: str):
 def create_email_message(
     to_address: str, subject: str, body: str
 ) -> EmailMessage:
-    """
-    Creates an email message object.
+    """Creates an email message object.
 
     Args:
         to_address (str): The recipient's email address.
@@ -54,8 +54,7 @@ def create_email_message(
 
 
 def send_email_via_smtp(msg: EmailMessage):
-    """
-    Sends an email message using the SMTP server.
+    """Sends an email message using the SMTP server.
 
     Args:
         msg (EmailMessage): The email message to send.

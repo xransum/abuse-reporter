@@ -12,8 +12,7 @@ from whois.exceptions import PywhoisError
 def get_whois_info(
     ip_addr: str, retry: int = 0, max_retries: int = 3
 ) -> whois.WhoisEntry | None:
-    """
-    Retrieves WHOIS information for a given IP address.
+    """Retrieves WHOIS information for a given IP address.
 
     Args:
         ip_addr (str): The IP address to query.
@@ -37,8 +36,7 @@ def get_whois_info(
 
 
 def get_ip_info(ip_addr: str) -> dict | None:
-    """
-    Fetches information about a given IP address using the ipinfo.io API.
+    """Fetches information about a given IP address using the ipinfo.io API.
 
     Args:
         ip_addr (str): The IP address to retrieve information for.
@@ -73,14 +71,14 @@ def get_ip_info(ip_addr: str) -> dict | None:
 
 
 def get_hostname_from_ip(ip_addr: str) -> str:
-    """
-    Performs a reverse DNS lookup to get the hostname for a given IP address.
+    """Performs a reverse DNS lookup to get the hostname for a given IP address.
 
     Args:
         ip_addr (str): The IP address to look up.
 
     Returns:
-        str: The hostname associated with the IP address, or "Unknown" if not found.
+        str: The hostname associated with the IP address, or "Unknown" if not
+            found.
     """
     try:
         hostname, *_ = socket.gethostbyaddr(ip_addr)

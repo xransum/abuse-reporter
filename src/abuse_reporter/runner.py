@@ -41,8 +41,8 @@ def run_agent() -> None:
     discord_webhook = DiscordWebhook(DISCORD_WEBHOOK_URL)
 
     command = (
-        f"zgrep -vE 'GET /(robots.txt)? |HEAD ' logs/{EXTERNAL_HOSTNAME}/https/access.log*"
-        " | sed 's|^[^:]*:||' | sort -t'[' -k2,2"
+        f"zgrep -vE 'GET /(robots.txt)? |HEAD ' logs/{EXTERNAL_HOSTNAME}"
+        "/https/access.log* | sed 's|^[^:]*:||' | sort -t'[' -k2,2"
     )
 
     try:
@@ -59,7 +59,7 @@ def run_agent() -> None:
         )
         sys.exit(1)
 
-    log_lines = [l for l in re.split(r"[\r\n]+", data) if l]
+    log_lines = [line for line in re.split(r"[\r\n]+", data) if line]
     print(
         f"Total Log Lines Fetched: {Fore.RED}{len(log_lines)}{Style.RESET_ALL}"
     )

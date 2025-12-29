@@ -34,8 +34,7 @@ def run_ssh_command(
     password: str,
     command: str,
 ) -> str:
-    """
-    Executes a command on a remote server over SSH.
+    """Executes a command on a remote server over SSH.
 
     Args:
         hostname (str): The hostname or IP address of the remote server.
@@ -52,7 +51,7 @@ def run_ssh_command(
     """
     timeout = 15
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # noqa: S507
 
     try:
         client.connect(
@@ -63,7 +62,7 @@ def run_ssh_command(
             timeout=timeout,
         )
 
-        _, stdout, stderr = client.exec_command(command)
+        _, stdout, stderr = client.exec_command(command)  # noqa: S601
         exit_status = stdout.channel.recv_exit_status()
 
         output = stdout.read().decode()
@@ -80,8 +79,7 @@ def run_ssh_command(
 def handle_already_reported_ip(
     ip_addr: str, logs: list[dict], report: dict
 ) -> None:
-    """
-    Handles the case where an IP address has already been reported.
+    """Handles the case where an IP address has already been reported.
 
     Args:
         ip_addr (str): The IP address.
@@ -103,8 +101,7 @@ def handle_flagged_ip(
     reports: ReportsDatabase,
     abuse_contact: str,
 ) -> None:
-    """
-    Handles the case where an IP address is flagged for unwanted traffic.
+    """Handles the case where an IP address is flagged for unwanted traffic.
 
     Args:
         ip_addr (str): The IP address.
@@ -172,13 +169,13 @@ def process_logs(
     qf: ContactFinder,
     discord_webhook: DiscordWebhook,
 ) -> None:
-    """
-    Processes logs grouped by IP address.
+    """Processes logs grouped by IP address.
 
     Args:
         logs_by_ip (dict): Logs grouped by IP address.
         reports (ReportsDatabase): The reports database instance.
         qf (ContactFinder): The contact finder instance.
+        discord_webhook (DiscordWebhook): The Discord webhook instance.
     """
     reported_ip_addrs = []
 
@@ -213,7 +210,8 @@ def process_logs(
 
                 if not NO_SEND:
                     discord_webhook.send_message(
-                        f":no_entry: Report sent for `{ip_addr}` (`{hostname}`) to `{abuse_contact}`"
+                        f":no_entry: Report sent for `{ip_addr}` (`{hostname}`)"
+                        f"to `{abuse_contact}`"
                     )
             else:
                 print(
@@ -237,8 +235,7 @@ def process_logs(
 
 
 def redact_hostname(txt: str, hostname: str, filler: str = "[REDACTED]") -> str:
-    """
-    Redacts occurrences of a specified hostname in the given text.
+    """Redacts occurrences of a specified hostname in the given text.
 
     This function replaces all instances of the specified hostname in the input
     text with a filler string. It ensures that both the hostname and its variant
@@ -248,8 +245,8 @@ def redact_hostname(txt: str, hostname: str, filler: str = "[REDACTED]") -> str:
         txt (str): The input text where the hostname should be redacted.
         hostname (str): The hostname to be redacted. If empty or "Unknown",
                         the function returns the original hostname.
-        filler (str, optional): The string to replace the hostname with.
-                                Defaults to "[REDACTED]".
+        filler (str): The string to replace the hostname with.
+                        Defaults to "[REDACTED]".
 
     Returns:
         str: The text with the hostname redacted.
@@ -275,9 +272,7 @@ def redact_hostname(txt: str, hostname: str, filler: str = "[REDACTED]") -> str:
 
 
 def is_request_flagged(log: dict) -> bool:
-    """
-    Determines if a given request log should be flagged based on its HTTP method
-    and URI path.
+    """Flags a request log based on its HTTP method and URI path.
 
     Args:
         log (dict): A dictionary containing request log details. Expected keys are:
@@ -310,15 +305,23 @@ def is_request_flagged(log: dict) -> bool:
 def group_logs_by_ip(
     log_lines: list[str], external_hostname: str, max_age_days: int = 3
 ) -> dict[str, list[dict]]:
-    """
-    Groups log lines by IP address.
+    """Groups log entries by their originating IP address.
+
+    This function processes a list of log lines, filters them based on specific
+    criteria, and groups the resulting logs by the remote IP address. Logs are
+    excluded if they match certain exclusion paths, are older than a specified
+    number of days, or lack required fields.
 
     Args:
-        log_lines (list[str]): A list of raw log lines.
-        external_hostname (str): The hostname to redact.
+        log_lines (list[str]): A list of raw log lines to be processed.
+        external_hostname (str): The hostname to be used during log processing.
+        max_age_days (int): The maximum age of logs to include, in days.
+            Defaults to 3.
 
     Returns:
-        dict: A dictionary where keys are IP addresses and values are lists of log data.
+        dict[str, list[dict]]: A dictionary where the keys are IP addresses and
+                                the values are lists of log entries associated\
+                                with those IPs.
     """
     logs_by_ip: dict[str, list[dict]] = {}
     for log_line in log_lines:
@@ -362,8 +365,7 @@ def group_logs_by_ip(
 
 
 def process_log_line(log_line: str, external_hostname: str) -> dict | None:
-    """
-    Processes a single log line, extracting relevant data.
+    """Processes a single log line, extracting relevant data.
 
     Args:
         log_line (str): The raw log line.
