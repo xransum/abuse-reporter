@@ -10,7 +10,7 @@ repository = "https://github.com/xransum/abuse-reporter"
 classifiers = ["Programming Language :: Python :: 3.11"]
 
 [tool.poetry.scripts]
-reporter = "abuse_reporter.main:main"
+reporter = "abuse_reporter.runner:run"
 
 [tool.poetry.dependencies]
 python = "^3.11"
