@@ -26,15 +26,14 @@ from abuse_reporter.handlers import (
 )
 
 
-if TESTING:
-    print(
-        f"{Fore.YELLOW}[!] TESTING MODE ENABLED - No actual reports will be sent."
-        f"{Style.RESET_ALL}"
-    )
-
-
-def run() -> None:
+def run_agent() -> None:
     """Run the Abuse Reporter program."""
+    if TESTING:
+        print(
+            f"{Fore.YELLOW}[!] TESTING MODE ENABLED - No actual reports will be sent."
+            f"{Style.RESET_ALL}"
+        )
+
     print(f"{Fore.GREEN}Abuse Reporter is running...{Style.RESET_ALL}")
 
     qf = ContactFinder()
