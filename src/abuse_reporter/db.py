@@ -4,38 +4,7 @@ import sqlite3
 
 
 class ReportsDatabase:
-    """ReportsDatabase is a class that provides an interface for managing a
-        database of reported IP addresses. It allows adding, retrieving, and
-        checking the existence of reported IPs in the database.
-    Attributes:
-        con (sqlite3.Connection): The SQLite database connection object.
-        cur (sqlite3.Cursor): The SQLite database cursor object.
-    Methods:
-        __init__(db_name: str):
-            Initializes the database connection and creates the `reported_ips`
-            table if it does not already exist.
-        get_reported_ip_addrs() -> list:
-            Retrieves a list of all reported IP addresses from the database.
-        get_reported_ip(ip_addr: str) -> dict | None:
-            Retrieves the details of a specific reported IP address, including the
-            date it was added. Returns None if the IP address is not found.
-        is_ip_addr_reported(ip_addr: str) -> bool:
-            Checks if a specific IP address has already been reported. Returns True
-            if the IP address is found, otherwise False.
-        add_reported_ip_addr(ip_addr: str, date_added: str = None):
-            Adds a new IP address to the `reported_ips` table. If `date_added` is not
-            provided, the current date is used as the default value.
-    """
-
     def __init__(self, db_name: str):
-        """
-        Initializes the ReportsDatabase instance by connecting to the SQLite
-            database.
-
-        Args:
-            db_name (str): The name of the SQLite database file.
-        """
-
         self.con = sqlite3.connect(db_name)
         self.cur = self.con.cursor()
 
@@ -97,8 +66,7 @@ class ReportsDatabase:
         reported_ip = self.get_reported_ip(ip_addr)
         if reported_ip:
             print(
-                f"Already reported {reported_ip['ip_addr']} on "
-                f"{reported_ip['date_added']}, skipping."
+                f"Already reported {reported_ip['ip_addr']} on {reported_ip['date_added']}, skipping."
             )
             return True
         return False
@@ -133,3 +101,9 @@ class ReportsDatabase:
             )
 
         self.con.commit()
+
+    def close(self):
+        """
+        Closes the database connection.
+        """
+        self.con.close()
