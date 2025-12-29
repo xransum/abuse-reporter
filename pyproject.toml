@@ -9,9 +9,6 @@ homepage = "https://github.com/xransum/abuse-reporter"
 repository = "https://github.com/xransum/abuse-reporter"
 classifiers = ["Programming Language :: Python :: 3.11"]
 
-[tool.poetry.scripts]
-reporter = "abuse_reporter.runner:run"
-
 [tool.poetry.dependencies]
 python = "^3.11"
 colorama = ">=0.4.6"
