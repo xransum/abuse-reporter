@@ -35,7 +35,7 @@ def get_whois_info(
         return None
 
 
-def get_ip_info(ip_addr: str) -> dict | None:
+def get_ip_info(ip_addr: str) -> dict[str, str] | None:
     """Fetches information about a given IP address using the ipinfo.io API.
 
     Args:
