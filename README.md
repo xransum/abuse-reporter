@@ -1,85 +1,120 @@
 # Abuse Reporter
 
-Abuse Reporter is a tool designed to analyze server logs, identify unwanted traffic, and automatically report abuse to the responsible parties. It integrates with WHOIS services, email, and Discord for streamlined reporting.
+Abuse Reporter analyses web server logs, identifies suspicious traffic, and
+automatically sends abuse reports to the responsible parties via email and
+Discord.
 
 ## Features
 
-- **Log Analysis**: Processes server logs to detect suspicious activity.
-- **WHOIS Lookup**: Retrieves abuse contact information for flagged IPs.
-- **Automated Reporting**: Sends abuse reports via email and notifies via Discord.
-- **Database Tracking**: Maintains a record of reported IPs to avoid duplicate reports.
+- **Log analysis** — fetches nginx access logs over SSH and parses them
+- **WHOIS lookup** — resolves abuse contact addresses for flagged IPs
+- **Automated reporting** — sends abuse reports via SMTP with Discord
+  notifications
+- **Duplicate prevention** — tracks reported IPs in a local SQLite database
+- **Dry-run mode** — preview what would be sent without touching anything
+- **Single config file** — one `config.toml`, never committed to git
+
+## Requirements
+
+- Python 3.11+
+- [uv](https://docs.astral.sh/uv/) for dependency management
 
 ## Installation
 
-1. Clone the repository:
+```bash
+git clone https://github.com/xransum/abuse-reporter.git
+cd abuse-reporter
+uv sync
+```
 
-   ```bash
-   git clone https://github.com/your-username/abuse-reporter.git
-   cd abuse-reporter
-   ```
+## Configuration
 
-2. Install Poetry (if not already installed):
+Copy the example template and fill in your credentials:
 
-   ```bash
-   curl -sSL https://install.python-poetry.org | python3 -
-   ```
+```bash
+cp config.example.toml config.toml
+# edit config.toml — replace every CHANGE_ME value
+```
 
-3. Install dependencies using Poetry:
+`config.toml` is git-ignored and will never be committed.
+`config.example.toml` is the reference template committed to the repo.
 
-   ```bash
-   poetry install
-   ```
+### Config structure
 
-4. Set up the environment file:
-   Create a `.env` file in the root directory with the following content:
-   ```
-   EXTERNAL_HOST="<REDACTED>"    # External Host / Domain
-   REMOTE_HOST="<REDACTED>"     # Remote Server Hostname
-   REMOTE_USER="<REDACTED>"     # Remote Login Username
-   REMOTE_PORT="<REDACTED>"     # Remote Service Port
-   REMOTE_PASS="<REDACTED>"     # Remote Authentication Secret
-   SMTP_HOST="<REDACTED>"       # SMTP Server Hostname
-   SMTP_PORT="<REDACTED>"       # SMTP Service Port
-   SMTP_USER="<REDACTED>"       # SMTP Username / Identity
-   SMTP_PASS="<REDACTED>"       # SMTP Authentication Secret
-   DISCORD_WEBHOOK_URL="<REDACTED>"  # Discord Webhook Url For Notifications
-   ```
+```toml
+[app]
+dry_run = false   # set true to always skip sends without --dry-run flag
+
+[remote]
+external_host = "yourdomain.com"   # public hostname of your site
+host          = "your.server.com"  # SSH hostname
+port          = 22
+user          = "ssh_user"
+pass          = "ssh_password"
+
+[smtp]
+host = "smtp.example.com"
+port = 587
+user = "abuse@yourdomain.com"
+pass = "smtp_password"
+
+[discord]
+webhook_url = ""   # leave empty to disable notifications
+
+[filters]
+blacklisted_emails = [
+    # "noreply@example.com",
+]
+```
 
 ## Usage
 
-Run the Abuse Reporter program using Poetry:
-
 ```bash
-poetry run python -m abuse_reporter
+# Normal run — fetches logs and sends real reports
+uv run abusereport
+
+# Dry-run — fetch and process logs, but skip all emails, Discord, and DB writes
+uv run abusereport --dry-run
 ```
 
-### Testing Mode
+You can also set `dry_run = true` in `config.toml` to make dry-run the
+persistent default (useful while you're setting things up).
 
-To enable testing mode, set the `TESTING` constant in `abuse_reporter/constants.py` to `True`. This prevents actual reports from being sent.
+## Development
 
-Alternatively, you can use the `NO_SEND` environment variable to disable sending SMTP and Discord notifications:
+### Install dev dependencies
 
 ```bash
-NO_SEND=1 poetry run python -m abuse_reporter
+uv sync --extra dev
 ```
 
-## Contributing
+### Linting and formatting
 
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix:
-   ```bash
-   git checkout -b feature-name
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Description of changes"
-   ```
-4. Push to your branch:
-   ```bash
-   git push origin feature-name
-   ```
-5. Open a pull request.
+```bash
+uv run ruff check src tests        # lint
+uv run ruff check --fix src tests  # lint + auto-fix
+uv run ruff format src tests       # format
+```
+
+### Type checking
+
+```bash
+uv run mypy src
+```
+
+### Tests
+
+```bash
+uv run pytest
+```
+
+### Pre-commit hooks
+
+```bash
+uv run pre-commit install
+uv run pre-commit run --all-files
+```
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+MIT — see [LICENSE](LICENSE).

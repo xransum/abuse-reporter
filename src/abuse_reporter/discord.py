@@ -1,4 +1,4 @@
-"""Module for Discord webhook messaging."""
+"""Discord webhook client for sending notification messages."""
 
 import sys
 
@@ -7,33 +7,37 @@ from requests.exceptions import RequestException
 
 
 class DiscordWebhook:
-    """A simple Discord webhook client for sending messages."""
+    """Thin wrapper around a Discord incoming webhook URL."""
 
-    def __init__(self, webhook_url: str):
-        """Initializes the DiscordWebhook with the provided webhook URL.
+    def __init__(self, webhook_url: str) -> None:
+        """Initialise the client with a webhook URL.
 
         Args:
-            webhook_url (str): The Discord webhook URL.
+            webhook_url: The Discord webhook URL.  Pass an empty string to
+                disable notifications silently.
         """
         self.webhook_url = webhook_url
 
-    def send_message(self, content: str):
-        """Sends a message to the Discord webhook.
+    def send_message(self, content: str, dry_run: bool = False) -> None:
+        """Post a message to the Discord webhook.
 
         Args:
-            content (str): The message content to send.
+            content: The message body to send.
+            dry_run: When True, print what would be posted without sending.
         """
         if not self.webhook_url:
-            print(
-                "Discord webhook URL not provided, skipping Discord notification."
-            )
             return
 
-        data = {"content": content}
+        if dry_run:
+            print(f"[DRY-RUN] Would post to Discord: {content!r}")
+            return
 
         try:
-            response = requests.post(self.webhook_url, json=data, timeout=10)
+            response = requests.post(
+                self.webhook_url,
+                json={"content": content},
+                timeout=10,
+            )
             response.raise_for_status()
-
-        except RequestException as e:
-            print(f"Failed to send Discord message: {e}", file=sys.stderr)
+        except RequestException as exc:
+            print(f"Failed to send Discord message: {exc}", file=sys.stderr)

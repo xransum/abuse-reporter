@@ -1,3 +1,16 @@
+# ---------------------------------------------------------------------------
+# Project-specific
+# ---------------------------------------------------------------------------
+
+# Credentials config — copy config.example.toml to config.toml and fill in
+# your real values.  config.toml is never committed.
+config.toml
+
+# Runtime database
+*.db
+*.sqlite
+*.sqlite3
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

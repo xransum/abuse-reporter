@@ -1,1 +1,1 @@
-"""Init test file."""
+"""Test package init."""

@@ -1,73 +1,103 @@
-[tool.poetry]
+[project]
 name = "abuse-reporter"
 version = "0.1.0"
 description = "Abuse reporting agent for websites hosted on Dreamhost."
-authors = ["xransum <xransum@users.noreply.github.com>"]
-license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/xransum/abuse-reporter"
-repository = "https://github.com/xransum/abuse-reporter"
+license = { text = "MIT" }
+authors = [{ name = "xransum", email = "xransum@users.noreply.github.com" }]
+requires-python = ">=3.11"
 classifiers = ["Programming Language :: Python :: 3.11"]
+dependencies = [
+    "colorama>=0.4.6",
+    "paramiko>=4.0.0",
+    "python-dotenv>=1.0.0",
+    "python-whois>=0.9.6",
+    "querycontacts>=2.0.0",
+    "requests>=2.32.5",
+    "rich>=14.2.0",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-colorama = ">=0.4.6"
-dotenv = ">=0.9.9"
-requests = ">=2.32.5"
-paramiko = "^4.0.0"
-python-whois = "^0.9.6"
-querycontacts = "^2.0.0"
-rich = "^14.2.0"
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.0.0",
+    "pre-commit>=4.0.0",
+    "pytest>=8.0.0",
+    "ruff>=0.15.0",
+    "types-colorama>=0.4.15",
+    "types-requests>=2.32.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-nox = ">=2020.8.22"
-pytest = ">=6.2.5"
-coverage = ">=7.13.0"
-mypy = ">=1.19.1"
-typeguard = ">=4.4.4"
-pre-commit = ">=4.5.1"
-pre-commit-hooks = ">=6.0.0"
-black = ">=25.12.0"
-flake8 = ">=7.3.0"
-flake8-bandit = ">=4.1.1"
-flake8-bugbear = ">=25.11.29"
-flake8-docstrings = ">=1.7.0"
-flake8-rst-docstrings = ">=0.4.0"
-darglint = ">=1.8.1"
-poetry = ">=2.2.1"
-isort = ">=7.0.0"
-reorder-python-imports = ">=3.16.0"
-typing-extensions = ">=4.15.0"
-nox-poetry = ">=1.2.0"
-poetry-plugin-export = ">=1.9.0"
-types-colorama = ">=0.4.15"
-types-requests = "^2.32.4.20250913"
-
-[tool.poetry.extras]
-# Extra name -> list of optional main deps
-typecheck = ["types-colorama"]
-
-[tool.coverage.paths]
-source = ["src", "*/site-packages"]
-
-[tool.coverage.run]
-branch = true
-source = ["abuse_reporter"]
-
-[tool.coverage.report]
-show_missing = true
-fail_under = 100
-
-[tool.pytest.ini_options]
-filterwarnings = []
-
-[tool.black]
-line-length = 80
-
-[tool.isort]
-profile = "black"
-lines_after_imports = 2
+[project.scripts]
+abusereport = "abuse_reporter.__main__:main"
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/abuse_reporter"]
+
+# ---------------------------------------------------------------------------
+# Ruff — linter + formatter (replaces black + isort + flake8)
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 88
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "S",    # flake8-bandit (security)
+    "C4",   # flake8-comprehensions
+    "PTH",  # flake8-use-pathlib
+    "PLR",  # pylint refactor
+    "BLE",  # flake8-blind-except
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "S101",    # assert statements are fine in tests
+    "S507",    # paramiko AutoAddPolicy is intentional
+    "S601",    # paramiko exec_command is intentional
+    "PLR2004", # magic value comparisons are fine where noted
+    "PLR0913", # functions with many parameters are acceptable in this codebase
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ---------------------------------------------------------------------------
+# Mypy — static type checking
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.11"
+strict = true
+pretty = true
+show_column_numbers = true
+show_error_codes = true
+show_error_context = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = [
+    "paramiko.*",
+    "whois.*",
+    "querycontacts.*",
+    "colorama.*",
+]
+ignore_missing_imports = true
+
+# ---------------------------------------------------------------------------
+# Pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]

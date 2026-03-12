@@ -1,0 +1,38 @@
+# config.example.toml — reference template committed to git.
+#
+# Copy this file to config.toml and replace every CHANGE_ME value with your
+# real credentials.  config.toml is git-ignored and will never be committed.
+#
+# Usage:
+#   abusereport            # normal run — sends real reports
+#   abusereport --dry-run  # fetch + process logs, but skip all sends
+
+[app]
+# Set dry_run = true to always skip sending emails, Discord messages, and DB
+# writes without needing the --dry-run flag every time.
+dry_run = false
+
+[remote]
+# The public-facing hostname / domain of your website (e.g. "example.com").
+external_host = "CHANGE_ME"
+# SSH hostname of the server where logs live.
+host = "CHANGE_ME"
+port = 22
+user = "CHANGE_ME"
+pass = "CHANGE_ME"
+
+[smtp]
+host = "CHANGE_ME"
+port = 587
+user = "CHANGE_ME"
+pass = "CHANGE_ME"
+
+[discord]
+# Leave empty string to disable Discord notifications entirely.
+webhook_url = ""
+
+[filters]
+# Email addresses that will never be sent abuse reports.
+blacklisted_emails = [
+    # "noreply@example.com",
+]
