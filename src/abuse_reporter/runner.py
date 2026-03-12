@@ -44,7 +44,7 @@ def run_agent(dry_run: bool = False) -> None:
     project_root = Path(__file__).resolve().parent.parent.parent
 
     qf = ContactFinder()
-    reports = ReportsDatabase(str(project_root / "reports.db"))
+    reports = ReportsDatabase(str(project_root / "reported_history.db"))
     discord_webhook = DiscordWebhook(cfg.discord.webhook_url)
 
     command = (
