@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help lint format typecheck test check
+.PHONY: help lint format typecheck test build check
 
 help:
 	@echo "Usage: make <target>"
@@ -9,18 +9,23 @@ help:
 	@echo "  format     ruff format src tests"
 	@echo "  typecheck  mypy src"
 	@echo "  test       pytest"
-	@echo "  check      lint + typecheck + test"
+	@echo "  build      uv build"
+	@echo "  check      format -> lint -> typecheck -> test -> build"
 
 lint:
-	uv run ruff check src tests
+	scripts/run lint
 
 format:
-	uv run ruff format src tests
+	scripts/run format
 
 typecheck:
-	uv run mypy src
+	scripts/run typecheck
 
 test:
-	uv run pytest
+	scripts/run test
 
-check: lint typecheck test
+build:
+	scripts/run build
+
+check:
+	scripts/run all

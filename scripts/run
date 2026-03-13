@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# scripts/run -- unified dev runner
+#
+# Usage:
+#   scripts/run <command> [...]
+#   scripts/run all
+#
+# Commands:
+#   lint        ruff check src tests
+#   format      ruff format src tests
+#   typecheck   mypy src
+#   test        pytest
+#   build       uv build
+#   all         run: format, lint, typecheck, test, build (stops on first failure)
+#
+# Any unrecognised command prints usage and exits 1.
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT"
+
+usage() {
+    cat >&2 <<EOF
+Usage: scripts/run <command>
+
+Commands:
+  lint        ruff check src tests
+  format      ruff format src tests
+  typecheck   mypy src
+  test        pytest
+  build       uv build
+  all         format -> lint -> typecheck -> test -> build
+EOF
+}
+
+cmd_lint() {
+    echo "==> lint"
+    uv run ruff check src tests
+}
+
+cmd_format() {
+    echo "==> format"
+    uv run ruff format src tests
+}
+
+cmd_typecheck() {
+    echo "==> typecheck"
+    uv run mypy src
+}
+
+cmd_test() {
+    echo "==> test"
+    uv run pytest
+}
+
+cmd_build() {
+    echo "==> build"
+    uv build
+}
+
+cmd_all() {
+    cmd_format
+    cmd_lint
+    cmd_typecheck
+    cmd_test
+    cmd_build
+    echo ""
+    echo "All steps passed."
+}
+
+if [[ $# -eq 0 ]]; then
+    usage
+    exit 1
+fi
+
+case "$1" in
+    lint)       cmd_lint ;;
+    format)     cmd_format ;;
+    typecheck)  cmd_typecheck ;;
+    test|tests) cmd_test ;;
+    build)      cmd_build ;;
+    all)        cmd_all ;;
+    -h|--help)  usage; exit 0 ;;
+    *)
+        echo "error: unknown command '$1'" >&2
+        echo "" >&2
+        usage
+        exit 1
+        ;;
+esac
