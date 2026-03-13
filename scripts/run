@@ -2,16 +2,16 @@
 # scripts/run -- unified dev runner
 #
 # Usage:
-#   scripts/run <command> [...]
-#   scripts/run all
+#   scripts/run <command>
 #
 # Commands:
+#   pre-commit  pre-commit run --all-files (lint + format + file checks)
 #   lint        ruff check src tests
 #   format      ruff format src tests
 #   typecheck   mypy src
 #   test        pytest
 #   build       uv build
-#   all         run: format, lint, typecheck, test, build (stops on first failure)
+#   all         pre-commit -> typecheck -> test -> build (stops on first failure)
 #
 # Any unrecognised command prints usage and exits 1.
 
@@ -25,13 +25,19 @@ usage() {
 Usage: scripts/run <command>
 
 Commands:
+  pre-commit  pre-commit run --all-files (lint + format + file checks)
   lint        ruff check src tests
   format      ruff format src tests
   typecheck   mypy src
   test        pytest
   build       uv build
-  all         format -> lint -> typecheck -> test -> build
+  all         pre-commit -> typecheck -> test -> build
 EOF
+}
+
+cmd_pre_commit() {
+    echo "==> pre-commit"
+    uv run pre-commit run --all-files
 }
 
 cmd_lint() {
@@ -60,8 +66,7 @@ cmd_build() {
 }
 
 cmd_all() {
-    cmd_format
-    cmd_lint
+    cmd_pre_commit
     cmd_typecheck
     cmd_test
     cmd_build
@@ -75,6 +80,7 @@ if [[ $# -eq 0 ]]; then
 fi
 
 case "$1" in
+    pre-commit) cmd_pre_commit ;;
     lint)       cmd_lint ;;
     format)     cmd_format ;;
     typecheck)  cmd_typecheck ;;
